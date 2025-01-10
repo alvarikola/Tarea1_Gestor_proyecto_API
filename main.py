@@ -40,7 +40,14 @@ def ejecutar_sql(sql_text):
         # Consulta SQL (por ejemplo, selecciona todos los registros de una tabla llamada usuarios)
         cursor.execute(sql_text)
 
-        if "INSERT" in sql_text or "UPDATE" in sql_text:
+        if "UPDATE" in sql_text:
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return jsonify({'msg': 'actualizado'})
+
+
+        if "INSERT" in sql_text:
             connection.commit()
             cursor.close()
             connection.close()
@@ -65,8 +72,7 @@ def ejecutar_sql(sql_text):
 
 @app.route('/hola_mundo', methods=['GET'])
 def hola_mundo():
-    return jsonify({ "msg": "Hola, mundo!" }
-)
+    return jsonify({ "msg": "Hola, mundo!" })
 
 
 @app.route('/empleado/empleados', methods=['GET'])
