@@ -40,7 +40,7 @@ def ejecutar_sql(sql_text):
         # Consulta SQL (por ejemplo, selecciona todos los registros de una tabla llamada usuarios)
         cursor.execute(sql_text)
 
-        if "INSERT" in sql_text:
+        if "INSERT" in sql_text or "UPDATE" in sql_text:
             connection.commit()
             cursor.close()
             connection.close()
@@ -149,7 +149,7 @@ def crear_proyectos():
             {cliente}
         )
     """
-    return ejecutar_sql(sql)
+    return jsonify(ejecutar_sql(sql))
 
 
 @app.route('/proyecto/asignar_gestor_proyecto', methods=['POST'])
@@ -165,7 +165,20 @@ def asignar_gestor_proyecto():
                 NOW()
             )
         """
-    return ejecutar_sql(sql)
+    return jsonify(ejecutar_sql(sql))
+
+
+@app.route('/proyecto/asignar_cliente_proyecto', methods=['POST'])
+def asignar_cliente_proyecto():
+    body_request = request.json
+    id_cliente = body_request["id_cliente"]
+    id_proyecto = body_request["id_proyecto"]
+    sql = f"""
+            UPDATE public."Proyecto"
+            SET cliente = {id_cliente}
+            WHERE id = {id_proyecto}
+        """
+    return jsonify(ejecutar_sql(sql))
 
 
 
