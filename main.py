@@ -265,10 +265,9 @@ def obtener_programadores():
 # Obtener tareas de un proyecto (sin asignar o asignada)
 @app.route('/proyecto/tareas_proyectos', methods=['GET'])
 def obtener_tareas_proyectos():
-    body_request = request.json
-    proyecto = body_request["proyecto"]
+    proyecto_id = request.args.get('id')
 
-    sql = f'SELECT * FROM public."Tarea" WHERE proyecto = {proyecto}'
+    sql = f'SELECT * FROM public."Tarea" WHERE proyecto = {proyecto_id}'
 
     return ejecutar_sql(sql)
 
