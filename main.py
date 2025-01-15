@@ -268,6 +268,11 @@ def obtener_tareas_proyectos():
     body_request = request.json
     proyecto = body_request["proyecto"]
 
+    sql = f'SELECT * FROM public."Tarea" WHERE proyecto = {proyecto}'
+
+    return ejecutar_sql(sql)
+
+
 
 
 
