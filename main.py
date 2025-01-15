@@ -263,7 +263,7 @@ def obtener_programadores():
 
 
 # Obtener tareas de un proyecto (sin asignar o asignada)
-@app.route('/proyecto/tareas_proyectos', methods=['POST'])
+@app.route('/proyecto/tareas_proyectos', methods=['GET'])
 def obtener_tareas_proyectos():
     body_request = request.json
     proyecto = body_request["proyecto"]
