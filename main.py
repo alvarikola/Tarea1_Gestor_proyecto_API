@@ -10,12 +10,7 @@ from flask import Flask, jsonify, request
 # Crear proyecto
 # Asignar gestor a proyecto
 # Asignar cliente a proyecto
-# Crear tareas a proyecto (debo estar asignado)
-# Asignar programador a proyecto
-# Asignar programadores a tareas
-# Obtener programadores
-# Obtener proyectos (activos o todos)
-# Obtener tareas de un proyecto (sin asignar o asignada)
+
 app = Flask(__name__)
 
 def ejecutar_sql(sql_text):
@@ -88,12 +83,13 @@ def obtener_lista_empleados():
 
     return jsonify(resultadoFinal)
 
+
+# Obtener proyectos (activos o todos)
 @app.route('/proyecto/proyectos', methods=['GET'])
 def obtener_proyectos():
     return ejecutar_sql(
         'SELECT * FROM public."Proyecto";'
     )
-
 
 @app.route('/proyecto/proyectos_activos', methods=['GET'])
 def obtener_proyectos_activos():
@@ -185,6 +181,93 @@ def asignar_cliente_proyecto():
             WHERE id = {id_proyecto}
         """
     return jsonify(ejecutar_sql(sql))
+
+
+# Crear tareas a proyecto (debo estar asignado)
+@app.route('/proyecto/tarea_proyecto', methods=['POST'])
+def crear_tarea_proyecto():
+    body_request = request.json
+    nombre = body_request["nombre"]
+    descripcion = body_request["descripcion"]
+    estimacion = body_request["estimacion"]
+    fecha_creacion = body_request["fecha_creacion"]
+    fecha_finalizacion = body_request["fecha_finalizacion"]
+    programador = body_request["programador"]
+    proyecto = body_request["proyecto"]
+
+    sql_verificar_programador = \
+        f"""
+            SELECT 1 FROM public."ProgramadoresProyecto"
+            WHERE proyecto = {proyecto} AND programador = {programador};
+        """
+
+    verificar = ejecutar_sql(sql_verificar_programador)
+    if not verificar.json:
+        return jsonify({"Error":"No estas asignado"})
+
+    sql = f"""
+            INSERT INTO public."Tarea" (nombre, descripcion, estimacion, fecha_creacion, fecha_finalizacion, programador, proyecto)
+			VALUES (
+			'{nombre}', 
+			'{descripcion}', 
+			{estimacion}, 
+			'{fecha_creacion}', 
+			'{fecha_finalizacion}', 
+			{programador}, 
+			{proyecto}
+			)
+        """
+    return ejecutar_sql(sql)
+
+
+# Asignar programador a proyecto
+@app.route('/proyecto/programador_proyecto', methods=['POST'])
+def asignar_programador_proyecto():
+    body_request = request.json
+    programador = body_request["programador"]
+    proyecto = body_request["proyecto"]
+    fecha_asignacion = body_request["fecha_asignacion"]
+
+    sql = f"""
+            INSERT INTO public."ProgramadoresProyecto" (programador, proyecto, fecha_asignacion)
+			VALUES (
+			{programador}, 
+			{proyecto}, 
+			'{fecha_asignacion}'
+			)
+        """
+    return jsonify(ejecutar_sql(sql))
+
+
+# Asignar programadores a tareas
+@app.route('/proyecto/asignar_programador_tarea', methods=['POST'])
+def asignar_programador_tarea():
+    body_request = request.json
+    tarea = body_request["tarea"]
+    programador = body_request["programador"]
+    sql = f"""
+            UPDATE public."Tarea"
+            SET programador = {programador}
+            WHERE id = {tarea}
+        """
+    return jsonify(ejecutar_sql(sql))
+
+
+# Obtener programadores
+@app.route('/proyecto/programadores', methods=['GET'])
+def obtener_programadores():
+
+    return ejecutar_sql(
+        f'SELECT * FROM public."Programador";'
+    )
+
+
+# Obtener tareas de un proyecto (sin asignar o asignada)
+@app.route('/proyecto/tareas_proyectos', methods=['POST'])
+def obtener_tareas_proyectos():
+    body_request = request.json
+    proyecto = body_request["proyecto"]
+
 
 
 
