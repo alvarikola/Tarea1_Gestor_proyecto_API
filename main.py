@@ -110,7 +110,7 @@ def obtener_proyectos_gestor_id():
 @app.route('/login', methods=['POST'])
 def gestor_login():
     body_request = request.json
-    user = body_request["usuario"]
+    user = body_request["user"]
     passwd = body_request["passwd"]
 
     is_logged = ejecutar_sql(
