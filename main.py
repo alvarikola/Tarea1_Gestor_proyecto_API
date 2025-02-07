@@ -91,11 +91,13 @@ def obtener_proyectos():
         'SELECT * FROM public."Proyecto";'
     )
 
+
 @app.route('/proyecto/proyectos_activos', methods=['GET'])
 def obtener_proyectos_activos():
     return ejecutar_sql(
         'SELECT * FROM public."Proyecto" WHERE fecha_finalizacion is null OR fecha_finalizacion >= CURRENT_TIMESTAMP;'
     )
+
 
 @app.route('/proyecto/historial', methods=['GET'])
 def obtener_historial():
@@ -107,11 +109,12 @@ def obtener_historial():
 @app.route('/proyecto/proyectos_gestor', methods=['GET'])
 def obtener_proyectos_gestor_id():
 
-    empleado_id = request.args.get('id')
+    gestor_id = request.args.get('id')
 
     return ejecutar_sql(
-        f'SELECT * FROM public."Proyecto" p INNER JOIN public."GestoresProyecto" gp ON p.id = gp.proyecto where gp.gestor = {empleado_id};'
+        f'SELECT * FROM public."Proyecto" p INNER JOIN public."GestoresProyecto" gp ON p.id = gp.proyecto where gp.gestor = {gestor_id};'
     )
+
 
 @app.route('/login', methods=['POST'])
 def gestor_login():
