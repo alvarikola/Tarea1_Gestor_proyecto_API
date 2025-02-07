@@ -94,7 +94,7 @@ def obtener_proyectos():
 @app.route('/proyecto/proyectos_activos', methods=['GET'])
 def obtener_proyectos_activos():
     return ejecutar_sql(
-        'SELECT nombre, descripcion, fecha_creacion, fecha_inicio, cliente FROM public."Proyecto" WHERE fecha_finalizacion is null OR fecha_finalizacion >= CURRENT_TIMESTAMP;'
+        'SELECT * FROM public."Proyecto" WHERE fecha_finalizacion is null OR fecha_finalizacion >= CURRENT_TIMESTAMP;'
     )
 
 @app.route('/proyecto/historial', methods=['GET'])
